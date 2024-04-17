@@ -29,6 +29,13 @@ bool scheduleHelper(
     int col
 );
 
+void scheduleIntialize(
+    const AvailabilityMatrix& avail,
+    const size_t dailyNeed,
+    const size_t maxShifts,
+    DailySchedule& sched
+);
+
 // Add your implementation of schedule() and other helper functions here
 
 bool schedule(
@@ -44,22 +51,10 @@ bool schedule(
     sched.clear();
     // Add your code below
 
-    size_t days = avail.size();
- 
-
-    for (size_t i = 0; i < days; ++i){
-        std::vector<Worker_T> day;
-        for (size_t j = 0; j < dailyNeed; ++j){
-            Worker_T k = -1;
-            day.push_back(k);
-        }
-        sched.push_back(day);
-    } 
+    scheduleIntialize(avail, dailyNeed, maxShifts, sched);
 
     std::vector<std::vector<int>> workers_avail;
     std::vector<size_t> shifts_avail;
-
-
 
     for (size_t i = 0; i < avail[0].size(); ++i){
         std::vector<int> days_avail;
@@ -74,6 +69,28 @@ bool schedule(
 
     return scheduleHelper(shifts_avail, workers_avail, sched, 0, 0);
 }
+
+void scheduleIntialize(
+    const AvailabilityMatrix& avail,
+    const size_t dailyNeed,
+    const size_t maxShifts,
+    DailySchedule& sched
+)
+{
+    size_t days = avail.size();
+ 
+
+    for (size_t i = 0; i < days; ++i){
+        std::vector<Worker_T> day;
+        for (size_t j = 0; j < dailyNeed; ++j){
+            Worker_T k = -1;
+            day.push_back(k);
+        }
+        sched.push_back(day);
+    } 
+
+}
+
 
 bool scheduleHelper(
     std::vector<size_t> shifts_avail,
