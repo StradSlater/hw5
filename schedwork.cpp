@@ -57,25 +57,20 @@ bool schedule(
     } 
 
     std::vector<std::vector<int>> workers_avail;
+    std::vector<size_t> shifts_avail;
+
+
 
     for (size_t i = 0; i < avail[0].size(); ++i){
         std::vector<int> days_avail;
         workers_avail.push_back(days_avail);
-    }  
-
-    for (size_t i = 0; i < workers_avail.size(); ++i){
         for (size_t j = 0; j < avail.size(); ++j){
             if (avail[j][i]){
                 workers_avail[i].push_back(j);
             }
         }
-    }
-
-    std::vector<size_t> shifts_avail;
-
-    for (size_t i = 0; i < workers_avail.size(); ++i){
         shifts_avail.push_back(maxShifts);
-    }
+    }  
 
     return scheduleHelper(shifts_avail, workers_avail, sched, 0, 0);
 }
