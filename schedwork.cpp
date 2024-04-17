@@ -36,6 +36,12 @@ void scheduleIntialize(
     DailySchedule& sched
 );
 
+std::vector<std::vector<int>>& w_avail2(int size1, int size2, const AvailabilityMatrix& avail, std::vector<std::vector<int>>& workers_avail);
+
+std::vector<std::vector<int>>& w_avail1(int size, const AvailabilityMatrix& avail, std::vector<std::vector<int>>& workers_avail);
+
+std::vector<size_t>& s_avail(size_t size, std::vector<size_t>& shifts_avail, const AvailabilityMatrix& avail, const size_t maxShifts);
+
 // Add your implementation of schedule() and other helper functions here
 
 bool schedule(
@@ -56,19 +62,55 @@ bool schedule(
     std::vector<std::vector<int>> workers_avail;
     std::vector<size_t> shifts_avail;
 
-    for (size_t i = 0; i < avail[0].size(); ++i){
-        std::vector<int> days_avail;
-        workers_avail.push_back(days_avail);
-        for (size_t j = 0; j < avail.size(); ++j){
-            if (avail[j][i]){
-                workers_avail[i].push_back(j);
-            }
-        }
-        shifts_avail.push_back(maxShifts);
-    }  
+    workers_avail = w_avail1(0, avail, workers_avail);
+    shifts_avail = s_avail(0, shifts_avail, avail, maxShifts);
 
     return scheduleHelper(shifts_avail, workers_avail, sched, 0, 0);
 }
+
+
+std::vector<size_t>& s_avail(size_t size, std::vector<size_t>& shifts_avail, const AvailabilityMatrix& avail, const size_t maxShifts){
+  if (size == avail[0].size()){
+    return shifts_avail;
+  }
+
+  else{
+    shifts_avail.push_back(maxShifts);
+    s_avail(size + 1, shifts_avail, avail, maxShifts);
+  }
+}
+
+
+std::vector<std::vector<int>>& w_avail2(int size1, int size2, const AvailabilityMatrix& avail, std::vector<std::vector<int>>& workers_avail){
+  if (size2 == avail.size()){
+    return workers_avail;
+  }
+
+  else{
+    if (avail[size2][size1]){
+      workers_avail[size1].push_back(size2);
+    }
+    w_avail2(size1, size2 + 1, avail, workers_avail);
+  }
+
+}
+
+std::vector<std::vector<int>>& w_avail1(int size, const AvailabilityMatrix& avail, std::vector<std::vector<int>>& workers_avail){
+  
+  if (size == avail[0].size()){
+    return workers_avail;
+  }
+
+  else{
+    std::vector<int> days_avail;
+    workers_avail.push_back(days_avail);
+    workers_avail = w_avail2(size, 0, avail, workers_avail);
+    w_avail1(size+1, avail, workers_avail);
+    return workers_avail;
+  }
+
+}
+
 
 void scheduleIntialize(
     const AvailabilityMatrix& avail,
